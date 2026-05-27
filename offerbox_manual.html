@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OfferBox 社内運用マニュアル</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1a4fa0;
+    --primary-light: #2d6fd6;
+    --primary-dark: #0f2d5e;
+    --accent: #f5a623;
+    --accent-light: #ffd080;
+    --surface: #f7f9fc;
+    --surface-2: #eef2f8;
+    --white: #ffffff;
+    --text: #1c2b40;
+    --text-muted: #6b7f9a;
+    --text-light: #a0b0c8;
+    --border: #d8e4f4;
+    --success: #2ea87e;
+    --warning: #f5a623;
+    --danger: #e05050;
+    --info: #3b82c4;
+    --sidebar-w: 260px;
+    --radius: 10px;
+    --shadow: 0 2px 16px rgba(26,79,160,0.10);
+    --shadow-lg: 0 8px 40px rgba(26,79,160,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 15px;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--primary-dark);
+    color: #c8d8f0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .sidebar-logo .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-logo h1 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.4;
+  }
+
+  .sidebar-logo .sub {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 4px;
+  }
+
+  .nav-section {
+    padding: 16px 0 8px;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--text-light);
+    padding: 0 20px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: #a8c0e0;
+    border-left: 3px solid transparent;
+    transition: all .2s;
+    text-decoration: none;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    border-left-color: var(--accent);
+  }
+
+  .nav-item .icon {
+    font-size: 15px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-breadcrumb {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .topbar-breadcrumb span { color: var(--primary); font-weight: 500; }
+
+  .topbar-meta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .topbar-meta .version {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-weight: 500;
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    padding: 48px 56px;
+    max-width: 900px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--primary-light) 100%);
+    border-radius: 16px;
+    padding: 44px 48px;
+    color: #fff;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 300px; height: 300px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: 40px; bottom: -80px;
+    width: 200px; height: 200px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(245,166,35,0.25);
+    border: 1px solid var(--accent);
+    color: var(--accent-light);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  .hero h2 {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1.4;
+    margin-bottom: 14px;
+    font-family: 'Noto Serif JP', serif;
+  }
+
+  .hero p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.82);
+    max-width: 520px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 32px;
+    margin-top: 28px;
+  }
+
+  .hero-stat { text-align: left; }
+  .hero-stat .num { font-size: 22px; font-weight: 700; color: var(--accent-light); }
+  .hero-stat .label { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 56px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .section-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    font-family: 'Noto Serif JP', serif;
+  }
+
+  .section-num {
+    font-size: 11px;
+    color: var(--primary-light);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 2px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── STEPS ── */
+  .steps {
+    counter-reset: step;
+  }
+
+  .step {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 0;
+    position: relative;
+  }
+
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 38px;
+    width: 2px;
+    height: calc(100% + 2px);
+    background: var(--border);
+  }
+
+  .step-num {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-body {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    flex: 1;
+    box-shadow: var(--shadow);
+  }
+
+  .step-body h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 6px;
+  }
+
+  .step-body p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    line-height: 1.7;
+  }
+
+  .callout-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+
+  .callout.info    { background: #e8f0fc; border-left: 4px solid var(--info); color: #1a3a6e; }
+  .callout.warn    { background: #fff8e8; border-left: 4px solid var(--warning); color: #7a4800; }
+  .callout.success { background: #e8f7f0; border-left: 4px solid var(--success); color: #0f4a30; }
+  .callout.danger  { background: #fdeaea; border-left: 4px solid var(--danger); color: #6a1515; }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin: 16px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    font-size: 13.5px;
+  }
+
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--surface); }
+
+  /* ── TEMPLATE BOX ── */
+  .template-box {
+    background: #f0f5ff;
+    border: 1px solid #c0d4f5;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 14px 0;
+    font-size: 13.5px;
+    line-height: 2;
+    white-space: pre-wrap;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+  }
+
+  .template-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--primary-light);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .badge-blue   { background: #dbeafe; color: var(--primary); }
+  .badge-green  { background: #d1fae5; color: #065f46; }
+  .badge-yellow { background: #fef3c7; color: #78350f; }
+  .badge-red    { background: #fee2e2; color: #991b1b; }
+  .badge-gray   { background: #f1f5f9; color: #475569; }
+
+  /* ── RULE LIST ── */
+  .rule-list {
+    list-style: none;
+    margin: 0;
+  }
+
+  .rule-list li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+
+  .rule-list li:last-child { border-bottom: none; }
+
+  .rule-mark {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .mark-ok  { background: #d1fae5; color: #065f46; }
+  .mark-ng  { background: #fee2e2; color: #991b1b; }
+
+  /* ── STATUS FLOW ── */
+  .status-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+
+  .status-chip {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .status-chip.current { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  .status-arrow {
+    color: var(--text-light);
+    font-size: 16px;
+    padding: 0 6px;
+  }
+
+  /* ── GRID ── */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  /* ── SUMMARY BOX ── */
+  .summary-box {
+    background: linear-gradient(135deg, #f0f5ff, #e8f0fc);
+    border: 1px solid #c0d4f5;
+    border-radius: var(--radius);
+    padding: 20px 24px;
+  }
+
+  .summary-box h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+  }
+
+  .summary-box ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13.5px;
+    line-height: 1.9;
+    color: var(--text);
+  }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    margin-top: 60px;
+    padding: 28px 0;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* ── QUICKSTART STEPS ── */
+  .qs-step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 0 20px;
+    margin-bottom: 0;
+    position: relative;
+  }
+
+  .qs-step:not(:last-child) .qs-line {
+    position: absolute;
+    left: 23px;
+    top: 48px;
+    width: 2px;
+    bottom: 0;
+    background: var(--border);
+    z-index: 0;
+  }
+
+  .qs-num-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .qs-num {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    font-size: 17px;
+    font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(26,79,160,0.25);
+  }
+
+  .qs-body {
+    padding-bottom: 32px;
+  }
+
+  .qs-step:last-child .qs-body { padding-bottom: 0; }
+
+  .qs-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-top: 10px;
+  }
+
+  .qs-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary-dark);
+  }
+
+  .qs-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 2px 9px;
+    border-radius: 20px;
+    background: var(--surface-2);
+    color: var(--primary);
+    border: 1px solid var(--border);
+  }
+
+  .qs-desc {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 12px;
+  }
+
+  .qs-desc strong { color: var(--text); }
+
+  /* 写真プレースホルダー */
+  .qs-img-ph {
+    background: var(--surface-2);
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-light);
+    font-size: 13px;
+    text-align: center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .qs-img-ph .ph-num {
+    position: absolute;
+    top: 10px; left: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--border);
+    letter-spacing: 0.05em;
+  }
+
+  .qs-img-ph .ph-big { font-size: 36px; opacity: 0.4; }
+  .qs-img-ph .ph-label { font-size: 12.5px; color: var(--text-light); font-weight: 500; }
+  .qs-img-ph .ph-hint  { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+  /* 実際の画像（差し替え後） */
+  .qs-img {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    display: block;
+  }
+
+  .qs-tip {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    background: #fff8e8;
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 9px 13px;
+    font-size: 12.5px;
+    color: #7a4800;
+    margin-top: 10px;
+    line-height: 1.7;
+  }
+
+  /* ── VIDEO ── */
+  .video-section {
+    margin: 20px 0;
+  }
+
+  .video-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 12px;
+  }
+
+  .video-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: box-shadow .2s, transform .2s;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+  }
+
+  .video-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+
+  .video-thumb {
+    position: relative;
+    background: linear-gradient(135deg, #1a2a4a, #2d4a80);
+    padding-top: 56.25%;
+    overflow: hidden;
+  }
+
+  .video-thumb img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .video-thumb .play-btn {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px; height: 44px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    transition: transform .2s;
+  }
+
+  .video-card:hover .play-btn { transform: translate(-50%, -50%) scale(1.12); }
+
+  .video-thumb .duration {
+    position: absolute;
+    bottom: 6px; right: 8px;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .video-thumb .channel-badge {
+    position: absolute;
+    top: 8px; left: 8px;
+    background: #ff0000;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .video-info {
+    padding: 12px 14px;
+  }
+
+  .video-info .v-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    line-height: 1.5;
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .video-info .v-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .video-info .v-tag {
+    background: var(--surface-2);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  /* 動画プレースホルダー（URL未設定）*/
+  .video-placeholder {
+    background: var(--white);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 12px;
+  }
+
+  .video-placeholder .ph-icon {
+    width: 48px; height: 48px;
+    background: var(--surface-2);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .video-placeholder .ph-text { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  .video-placeholder .ph-text strong { color: var(--primary); display: block; font-size: 13.5px; margin-bottom: 2px; }
+
+  .video-placeholder input {
+    margin-top: 8px;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 12.5px;
+    color: var(--text);
+    font-family: monospace;
+    background: var(--surface);
+    outline: none;
+  }
+
+  .video-placeholder input:focus { border-color: var(--primary-light); }
+
+  .video-channel-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ff0000;
+    color: #fff;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    margin-top: 12px;
+    transition: background .2s, transform .2s;
+  }
+
+  .video-channel-link:hover { background: #cc0000; transform: translateY(-1px); }
+
+  /* ── VIDEO LINK CARD ── */
+  .video-link-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, #f0f5ff, #e8f0fc);
+    border: 1.5px solid #b8cef5;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    text-decoration: none;
+    color: var(--text);
+    margin-top: 10px;
+    transition: box-shadow .2s, transform .2s, background .2s;
+  }
+
+  .video-link-card:hover {
+    box-shadow: 0 4px 20px rgba(26,79,160,0.18);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #e4edff, #d8e8fa);
+  }
+
+  .vlc-icon {
+    width: 40px; height: 40px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .vlc-body { flex: 1; }
+
+  .vlc-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 2px;
+  }
+
+  .vlc-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+
+  .vlc-url {
+    font-size: 11px;
+    color: var(--primary-light);
+    font-family: monospace;
+  }
+
+  .vlc-arrow {
+    font-size: 18px;
+    color: var(--primary-light);
+    flex-shrink: 0;
+  }
+
+  /* ── SCROLL ANIMATION ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .5s ease, transform .5s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .content { padding: 28px 20px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .hero { padding: 28px 24px; }
+    .hero h2 { font-size: 20px; }
+    .hero-stats { flex-wrap: wrap; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="badge">INTERNAL</div>
+    <h1>OfferBox<br>社内運用マニュアル</h1>
+    <div class="sub">Ver 1.0 ／ 2026年6月策定</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">はじめに</div>
+    <a class="nav-item" href="#quickstart"><span class="icon">🚀</span>ログイン〜送信の流れ</a>
+    <a class="nav-item" href="#overview"><span class="icon">📋</span>マニュアル概要</a>
+    <a class="nav-item" href="#roles"><span class="icon">👥</span>役割と権限</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">基本設定</div>
+    <a class="nav-item" href="#profile"><span class="icon">🏢</span>企業プロフィール作成</a>
+    <a class="nav-item" href="#account"><span class="icon">⚙️</span>アカウント設定</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">採用オペレーション</div>
+    <a class="nav-item" href="#offer"><span class="icon">📨</span>オファー送付手順</a>
+    <a class="nav-item" href="#message"><span class="icon">💬</span>学生メッセージ対応</a>
+    <a class="nav-item" href="#status"><span class="icon">📊</span>進捗・ステータス管理</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">ルール・ガイドライン</div>
+    <a class="nav-item" href="#rules"><span class="icon">📌</span>社内運用ルール</a>
+    <a class="nav-item" href="#ng"><span class="icon">🚫</span>NGワード・禁止事項</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">動画・外部リソース</div>
+    <a class="nav-item" href="#videos"><span class="icon">▶️</span>公式動画・チャンネル</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-breadcrumb">社内ドキュメント ／ <span>OfferBox 運用マニュアル</span></div>
+    <div class="topbar-meta">
+      <div class="version">Ver 1.0</div>
+      <div>策定：2026年6月</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- HERO -->
+    <div class="hero fade-in">
+      <div class="hero-tag">OFFICIAL MANUAL</div>
+      <h2>OfferBox 社内運用マニュアル</h2>
+      <p>本マニュアルは、オファーボックスを社内で適切に運用するためのガイドラインです。担当者が変わっても一貫した採用活動ができるよう、操作手順・文面・ルールを一元化しています。</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="num">全員対象</div>
+          <div class="label">担当者〜管理職</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num">5章構成</div>
+          <div class="label">設定〜ルールまで網羅</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num">文面テンプレ付</div>
+          <div class="label">すぐ使えるひな形</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICKSTART -->
+    <div id="quickstart" class="section fade-in">
+      <div class="section-header">
+        <div class="section-icon">🚀</div>
+        <div>
+          <div class="section-num">QUICK START</div>
+          <div class="section-title">ログインからスカウト送信までの流れ</div>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">💡</span>
+        <div>初めて操作する方はこの手順表を上から順に確認してください。<strong>各ステップの写真欄</strong>に実際の画面キャプチャを貼り付けて社内共有すると、さらに使いやすくなります。</div>
+      </div>
+
+      <div style="margin-top: 24px;">
+
+        <!-- STEP 1 -->
+        <div class="qs-step">
+          <div class="qs-line"></div>
+          <div class="qs-num-wrap"><div class="qs-num">1</div></div>
+          <div class="qs-body">
+            <div class="qs-header">
+              <div class="qs-title">OfferBoxにログイン</div>
+              <div class="qs-tag">offerbox.jp</div>
+            </div>
+            <div class="qs-desc">
+              ブラウザで <strong>offerbox.jp</strong> を開き、企業アカウントのメールアドレスとパスワードを入力してログインします。<br>
+              ※ 初回ログイン時はパスワードの変更を求められる場合があります。
+            </div>
+            <img src="images/step_01.png" class="qs-img" alt="STEP1 ログイン画面" />
+            <div class="qs-tip">⚠️ IDとパスワードは採用担当者間でも共有厳禁。各自のアカウントで個別ログインすること。</div>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="qs-step">
+          <div class="qs-line"></div>
+          <div class="qs-num-wrap"><div class="qs-num">2</div></div>
+          <div class="qs-body">
+            <div class="qs-header">
+              <div class="qs-title">ダッシュボードを確認</div>
+              <div class="qs-tag">ホーム画面</div>
+            </div>
+            <div class="qs-desc">
+              ログイン後にダッシュボードが表示されます。<strong>未対応のオファー承認・メッセージ受信</strong>がある場合は赤いバッジで通知されます。毎朝ログイン時に必ず確認してください。
+            </div>
+            <div class="qs-img-ph">
+              <div class="ph-num">STEP 2 スクリーンショット</div>
+              <div class="ph-big">📊</div>
+              <div class="ph-label">ダッシュボード画面のスクリーンショットをここに貼り付け</div>
+              <div class="ph-hint">通知バッジ・オファー残枠が表示されている状態が理想</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="qs-step">
+          <div class="qs-line"></div>
+          <div class="qs-num-wrap"><div class="qs-num">3</div></div>
+          <div class="qs-body">
+            <div class="qs-header">
+              <div class="qs-title">学生を検索・絞り込む</div>
+              <div class="qs-tag">学生検索</div>
+            </div>
+            <div class="qs-desc">
+              ログイン後、左メニューの<strong>「見つける」</strong>から学生検索画面を開きます。各条件で絞り込んでから「この条件で検索する」をクリックしてください。<br><br>
+              <strong>【推奨絞り込み条件の例】</strong><br>
+              学校グループ：旧帝大・早慶グループ ／ 専攻：理系 ／ 志望勤務地：関東圏<br>
+              転居を伴う転勤可：✓ ／ 志望企業タイプ：ベンチャー ／ プロフィール入力率：80%以上
+            </div>
+            <img src="images/step_02.png" class="qs-img" alt="STEP3 学生検索画面" />
+            <div class="qs-tip">💡 「強み」タグ・自己PR内容・希望職種を必ず確認。プロフィール未読のままオファーを送ることは禁止です。</div>
+            <div style="margin-top:12px;">
+              <div class="template-label" style="margin-bottom:6px;">📌 保存した検索条件の確認方法</div>
+              <img src="images/step_03.png" class="qs-img" alt="保存した検索条件タブ" />
+              <div class="qs-tip" style="margin-top:8px;">📁 「保存した検索条件」タブで保存済み条件を呼び出せます。保存名のルール：<strong>「作成者名：エリア：属性：etc」</strong>で統一してください。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="qs-step">
+          <div class="qs-line"></div>
+          <div class="qs-num-wrap"><div class="qs-num">4</div></div>
+          <div class="qs-body">
+            <div class="qs-header">
+              <div class="qs-title">学生のプロフィールを精読</div>
+              <div class="qs-tag">プロフィール詳細</div>
+            </div>
+            <div class="qs-desc">
+              一覧から気になる学生の<strong>「詳細を見る」</strong>をクリックしてプロフィール詳細ページを開きます。<br>
+              志望業界・志望職種・自己PRを確認し、<strong>自社との接点を見つけてから</strong>オファー文に反映します。
+            </div>
+            <div style="margin-bottom:10px;">
+              <div class="template-label" style="margin-bottom:6px;">① 検索結果カードで「詳細を見る」をクリック</div>
+              <img src="images/step_04.png" class="qs-img" alt="STEP4-1 プロフィールカード" />
+            </div>
+            <div>
+              <div class="template-label" style="margin-bottom:6px;">② 詳細ページで「☞ オファーする」をクリック</div>
+              <img src="images/step_05.png" class="qs-img" alt="STEP4-2 プロフィール詳細・オファーボタン" />
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5 -->
+        <div class="qs-step">
+          <div class="qs-line"></div>
+          <div class="qs-num-wrap"><div class="qs-num">5</div></div>
+          <div class="qs-body">
+            <div class="qs-header">
+              <div class="qs-title">オファー文を作成・編集</div>
+              <div class="qs-tag">オファー内容の入力</div>
+            </div>
+            <div class="qs-desc">
+              プロフィール詳細ページで「☞ オファーする」をクリックすると入力画面が開きます。<br><br>
+              <strong>【送り方は2通り】</strong><br>
+              ① <strong>テンプレートから選んで送る</strong>：「個人テンプレート」プルダウンから選択<br>
+              ② <strong>文章を自由作成して送る</strong>：テキストエリアに直接入力<br><br>
+              作成後、右下の<strong>「送信内容の確認へ進む」</strong>をクリックします。
+            </div>
+<img src="images/step_06.png" class="qs-img" alt="STEP5 オファー内容入力" />
+            <div class="qs-tip">💡 件名・本文・添付ファイル（任意）を確認してから送付。送付後は取り消しできません。</div>
+          </div>
+        </div>
+
+        <!-- STEP 6 -->
+        <div class="qs-step">
+          <div class="qs-line"></div>
+          <div class="qs-num-wrap"><div class="qs-num">6</div></div>
+          <div class="qs-body">
+            <div class="qs-header">
+              <div class="qs-title">送付前の最終確認・送信</div>
+              <div class="qs-tag">送信内容の確認</div>
+            </div>
+            <div class="qs-desc">
+              送信先・送信者・メッセージ内容を確認します。<strong>学生名・文面の誤字・コピペ修正漏れ</strong>がないかチェックし、右下の<strong>「オファーを送信する」</strong>ボタンを押します。<br>
+              ※送信後は取り消しできません。必ず確認してから押してください。
+            </div>
+<img src="images/step_07.png" class="qs-img" alt="STEP6 送信内容確認" />
+          </div>
+        </div>
+
+        <!-- STEP 7 -->
+        <div class="qs-step">
+          <div class="qs-num-wrap"><div class="qs-num" style="background:linear-gradient(135deg,var(--success),#2ecc9a);">✓</div></div>
+          <div class="qs-body">
+            <div class="qs-header">
+              <div class="qs-title">送信完了・テンプレート保存・次のアクション</div>
+              <div class="qs-tag">オファー送信完了</div>
+            </div>
+            <div class="qs-desc">
+              「<strong>オファー送信しました！</strong>」の画面が表示されたら完了です。<br><br>
+              <strong>この画面でできること：</strong><br>
+              ・よく使う文面は<strong>「編集保存」</strong>でテンプレート登録（最大15件）<br>
+              ・承認されたら<strong>メッセージ機能・選考管理リスト</strong>で次の選考へ<br>
+              ・管理表のステータスを<strong>「オファー送付済」</strong>に更新し、5営業日後のフォロー日をカレンダーに登録して完了
+            </div>
+<img src="images/step_08.png" class="qs-img" alt="STEP7 オファー送信完了" />
+            <div class="qs-tip">✅ ここまで完了したら1サイクル終了です。承認通知が来たら <strong>Chapter 04（メッセージ対応）</strong> に進んでください。</div>
+          </div>
+        </div>
+
+      </div><!-- /steps -->
+    </div>
+
+    <!-- 1. 概要 -->
+    <div id="overview" class="section fade-in">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <div>
+          <div class="section-num">CHAPTER 01</div>
+          <div class="section-title">マニュアル概要・OfferBoxとは</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎯 OfferBoxとは</div>
+        <p style="font-size:13.5px;color:var(--text-muted);line-height:1.8;">OfferBox（オファーボックス）は、企業が学生にオファー（スカウトメール）を送り、直接アプローチできるダイレクトリクルーティングサービスです。学生はプロフィールを登録し、企業からのオファーを待つ形式のため、<strong>自社から積極的に採用したい人材に直接アプローチ</strong>できます。</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">✅ できること</div>
+          <ul style="font-size:13px;line-height:2;color:var(--text-muted);padding-left:18px;">
+            <li>学生プロフィールの閲覧・検索</li>
+            <li>オファーメールの送付</li>
+            <li>学生とのメッセージ交換</li>
+            <li>選考ステータスの管理</li>
+            <li>企業プロフィールの編集</li>
+            <li>説明会・面接の案内送付</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">⚠️ 注意事項</div>
+          <ul style="font-size:13px;line-height:2;color:var(--text-muted);padding-left:18px;">
+            <li>月間オファー送付数に上限あり</li>
+            <li>同一学生へのオファーは原則1回</li>
+            <li>プロフィール閲覧は記録される</li>
+            <li>個人情報は厳重に管理すること</li>
+            <li>不適切な表現は利用停止の対象</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div>本マニュアルで不明点が生じた場合は、<strong>採用責任者</strong>に確認してください。OfferBox の仕様変更に伴い、本マニュアルも随時更新します。最新版を必ずご参照ください。</div>
+      </div>
+    </div>
+
+    <!-- 2. 役割 -->
+    <div id="roles" class="section fade-in">
+      <div class="section-header">
+        <div class="section-icon">👥</div>
+        <div>
+          <div class="section-num">CHAPTER 01-B</div>
+          <div class="section-title">役割と権限分担</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>役割</th>
+              <th>主な権限・業務</th>
+              <th>対象者</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>管理者</strong><br><span class="badge badge-red">Admin</span></td>
+              <td>アカウント管理、オファー枠の配分、全データ閲覧、設定変更、採用戦略の決定</td>
+              <td>採用責任者・HR Manager</td>
+            </tr>
+            <tr>
+              <td><strong>担当者</strong><br><span class="badge badge-blue">Recruiter</span></td>
+              <td>学生検索・閲覧、オファー送付、メッセージ対応、ステータス更新</td>
+              <td>採用担当者</td>
+            </tr>
+            <tr>
+              <td><strong>閲覧者</strong><br><span class="badge badge-gray">Viewer</span></td>
+              <td>学生プロフィール閲覧・進捗確認のみ（操作不可）</td>
+              <td>事業部マネージャーなど</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div>権限の変更・追加は必ず<strong>採用責任者の承認</strong>を得てから管理者が実施してください。担当者が独断で他メンバーへ権限を付与することは禁止です。</div>
+      </div>
+    </div>
+
+    <!-- 3. 企業プロフィール -->
+    <div id="profile" class="section fade-in">
+      <div class="section-header">
+        <div class="section-icon">🏢</div>
+        <div>
+          <div class="section-num">CHAPTER 02</div>
+          <div class="section-title">企業プロフィールの作成・編集</div>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">💡</span>
+        <div>企業プロフィールは学生が最初に見るページです。<strong>「この会社で働きたい」と思わせる情報設計</strong>を意識して作成してください。写真や具体的なエピソードが効果的です。</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📝 必須入力項目チェックリスト</div>
+        <div class="table-wrap" style="margin:10px 0 0;">
+          <table>
+            <thead>
+              <tr><th>項目</th><th>推奨文字数・内容</th><th>ポイント</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>会社概要</strong></td><td>300〜500字</td><td>事業内容・強みをわかりやすく</td></tr>
+              <tr><td><strong>求める人物像</strong></td><td>200〜400字</td><td>スキルより人柄・価値観を中心に</td></tr>
+              <tr><td><strong>職場の雰囲気・カルチャー</strong></td><td>200〜350字</td><td>具体的なエピソードを含める</td></tr>
+              <tr><td><strong>入社後のキャリアパス</strong></td><td>200〜400字</td><td>3年・5年後のイメージを記載</td></tr>
+              <tr><td><strong>福利厚生・制度</strong></td><td>箇条書き可</td><td>他社との差別化ポイントを強調</td></tr>
+              <tr><td><strong>写真・画像</strong></td><td>3枚以上</td><td>オフィス・チーム・イベント等</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">✍️ プロフィール文のNG表現</div>
+        <ul class="rule-list">
+          <li><span class="rule-mark mark-ng">✕</span>「若手が活躍できる会社です」→ 年齢差別の可能性。「成長意欲のある方が活躍しています」に変更</li>
+          <li><span class="rule-mark mark-ng">✕</span>「体育会系歓迎」→ 差別的印象。「チームワークを大切にできる方」に変更</li>
+          <li><span class="rule-mark mark-ng">✕</span>曖昧な給与・待遇表記（「応相談」のみ）→ 最低限の目安金額を記載</li>
+          <li><span class="rule-mark mark-ok">✓</span>具体的な数字・実績（「入社3年で〇〇を担当」「リモート率◯%」等）</li>
+          <li><span class="rule-mark mark-ok">✓</span>社員の声・顔写真付きのメッセージ</li>
+        </ul>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div>プロフィールの<strong>内容変更は採用責任者の確認後に公開</strong>してください。誤った情報が公開されると信頼失墜につながります。編集後は必ず保存・公開を確認すること。</div>
+      </div>
+
+      <div class="video-section">
+        <div class="template-label">▶ 関連公式リソース</div>
+        <a class="video-link-card" href="https://offerbox.zendesk.com/hc/ja/articles/38354821048473--OfferBox%E4%BD%BF%E3%81%84%E6%96%B9%E5%8B%95%E7%94%BB" target="_blank" rel="noopener">
+          <div class="vlc-icon">▶</div>
+          <div class="vlc-body">
+            <div class="vlc-title">OfferBox 使い方動画</div>
+            <div class="vlc-meta">企業プロフィール作成・編集の操作手順を動画で確認できます</div>
+            <div class="vlc-url">offerbox.zendesk.com ／ ログイン必須</div>
+          </div>
+          <div class="vlc-arrow">→</div>
+        </a>
+        <a class="video-link-card" href="https://offerbox.zendesk.com/hc/ja/articles/26397450664089-OfferBox%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB" target="_blank" rel="noopener">
+          <div class="vlc-icon" style="background:var(--success);">📄</div>
+          <div class="vlc-body">
+            <div class="vlc-title">OfferBox 基本操作マニュアル</div>
+            <div class="vlc-meta">プロフィール設定の画面操作を文書・図解で確認できます</div>
+            <div class="vlc-url">offerbox.zendesk.com ／ ログイン必須</div>
+          </div>
+          <div class="vlc-arrow">→</div>
+        </a>
+      </div>
+
+    </div><!-- /profile section -->
+
+    <!-- 4. オファー -->
+    <div id="offer" class="section fade-in">
+      <div class="section-header">
+        <div class="section-icon">📨</div>
+        <div>
+          <div class="section-num">CHAPTER 03</div>
+          <div class="section-title">オファー送付の手順と文面</div>
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>学生を検索・絞り込む</h4>
+            <p>「学生検索」から学部・文理・希望職種・強みキーワードで絞り込みます。<br>まずは<strong>100〜200人</strong>を対象リストに追加し、精読して候補を絞ります。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>プロフィールを必ず精読する</h4>
+            <p>自己PR・ガクチカ・希望職種を確認し、<strong>自社との接点・根拠を見つけてから</strong>オファーを送ります。プロフィールを読まずにオファーを送ることは禁止です。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>オファー文面を作成する</h4>
+            <p>下記テンプレートをベースに、<strong>学生の個性に触れた一文を必ず追加</strong>してください。コピペのみの文面は返信率が大幅に下がります。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>送付前の最終確認</h4>
+            <p>誤字・脱字、学生名の確認、リンク切れのチェックをしてから送付します。送付後は取り消しできないため必ず確認してください。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h4>ステータスを「オファー済」に更新</h4>
+            <p>送付後は管理表のステータスを更新し、<strong>フォローアップ日（5営業日後）</strong>をカレンダーに登録します。</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px;">
+        <div class="template-label">📄 オファーメール テンプレート（標準版）</div>
+        <div class="template-box">〇〇さん
+
+はじめまして。株式会社◯◯◯◯ 採用担当の【担当者名】と申します。
+
+〇〇さんのプロフィールを拝見し、【←ここに具体的な内容を1〜2文で記載】
+という点に強く共感し、ぜひ一度お話しさせていただきたいと思いオファーをお送りしました。
+
+━━━━━━━━━━━━━━━
+■ 私たちについて
+━━━━━━━━━━━━━━━
+私たちは【事業内容を1〜2文で】を行っている会社です。
+現在、【募集職種・ミッション】に取り組んでいただける方を募集しています。
+
+━━━━━━━━━━━━━━━
+■ 〇〇さんにお伝えしたいこと
+━━━━━━━━━━━━━━━
+【なぜこの学生に声をかけたのか、自社との接点を具体的に記載】
+
+カジュアルな形でお話しするだけでも構いません。
+少しでも興味をお持ちいただけましたら、ぜひご返信ください。
+
+どうぞよろしくお願いいたします。
+
+────────────────────
+【担当者名】
+株式会社◯◯◯◯ 採用担当
+TEL：03-XXXX-XXXX
+────────────────────</div>
+      </div>
+
+      <div class="callout success">
+        <span class="callout-icon">✅</span>
+        <div><strong>返信率を上げるコツ：</strong>学生の自己PRやガクチカから<strong>1つ具体的なエピソード</strong>に触れること。「〇〇のご経験が印象的でした」など固有名詞を入れると効果的です。</div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>オファー数の管理：</strong>月間送付上限を超えないよう、週次で残数を確認してください。上限に近づいた場合は採用責任者に報告し、送付優先順位を相談すること。</div>
+      </div>
+
+      <div class="video-section">
+        <div class="template-label">▶ 関連公式リソース</div>
+        <a class="video-link-card" href="https://offerbox.zendesk.com/hc/ja/articles/38354821048473--OfferBox%E4%BD%BF%E3%81%84%E6%96%B9%E5%8B%95%E7%94%BB" target="_blank" rel="noopener">
+          <div class="vlc-icon">▶</div>
+          <div class="vlc-body">
+            <div class="vlc-title">OfferBox 使い方動画</div>
+            <div class="vlc-meta">オファー送付の手順・承認率アップのコツを動画で確認できます</div>
+            <div class="vlc-url">offerbox.zendesk.com ／ ログイン必須</div>
+          </div>
+          <div class="vlc-arrow">→</div>
+        </a>
+        <a class="video-link-card" href="https://offerbox.zendesk.com/hc/ja/articles/26397450664089-OfferBox%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB" target="_blank" rel="noopener">
+          <div class="vlc-icon" style="background:var(--success);">📄</div>
+          <div class="vlc-body">
+            <div class="vlc-title">OfferBox 基本操作マニュアル</div>
+            <div class="vlc-meta">オファー送付の画面操作を文書・図解で確認できます</div>
+            <div class="vlc-url">offerbox.zendesk.com ／ ログイン必須</div>
+          </div>
+          <div class="vlc-arrow">→</div>
+        </a>
+        <a class="video-link-card" href="https://offerbox.zendesk.com/hc/ja/articles/900002042603-%E3%82%AA%E3%83%95%E3%82%A1%E3%83%BC%E6%96%87%E4%BD%9C%E6%88%90%E3%81%AE%E6%96%B9%E6%B3%95" target="_blank" rel="noopener">
+          <div class="vlc-icon" style="background:var(--accent);">✍️</div>
+          <div class="vlc-body">
+            <div class="vlc-title">オファー文作成の方法</div>
+            <div class="vlc-meta">魅力的なオファー文の書き方・ポイントを公式が解説</div>
+            <div class="vlc-url">offerbox.zendesk.com ／ ログイン必須</div>
+          </div>
+          <div class="vlc-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 5. メッセージ対応 -->
+    <div id="message" class="section fade-in">
+      <div class="section-header">
+        <div class="section-icon">💬</div>
+        <div>
+          <div class="section-num">CHAPTER 04</div>
+          <div class="section-title">学生とのメッセージ対応</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📏 対応の基本ルール</div>
+        <ul class="rule-list">
+          <li><span class="rule-mark mark-ok">✓</span><strong>返信は原則1営業日以内：</strong>学生の志望度に直結します。翌営業日AM中を目安に返信してください</li>
+          <li><span class="rule-mark mark-ok">✓</span><strong>丁寧かつ親しみやすい文体：</strong>です・ます調を基本に、堅すぎず崩しすぎない言葉を使う</li>
+          <li><span class="rule-mark mark-ok">✓</span><strong>質問には必ず回答：</strong>答えにくい内容も「確認の上折り返します」と一言添えて対応</li>
+          <li><span class="rule-mark mark-ng">✕</span>プライベートな連絡先（個人LINE・携帯）のやりとりは禁止</li>
+          <li><span class="rule-mark mark-ng">✕</span>給与・条件交渉はメッセージで行わない（面接・内定通知の場で行う）</li>
+          <li><span class="rule-mark mark-ng">✕</span>選考の合否をメッセージ機能で通知しない（メールまたは電話で行う）</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div class="template-label">💬 返信テンプレート集</div>
+
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-title">① オファー承認後の最初の返信</div>
+          <div class="template-box" style="margin:8px 0 0;">〇〇さん
+
+オファーをご承認いただきありがとうございます！
+改めて、採用担当の【名前】です。
+
+ぜひ一度、カジュアルにお話しする機会をいただけますと嬉しいです。
+下記のご都合をお聞かせいただけますでしょうか？
+
+■ ご希望をお知らせください
+・日程：ご都合のよい日時（2〜3候補）
+・形式：ZoomまたはGoogle Meet（どちらでも対応可）
+・所要時間：約30〜45分を予定しています
+
+質問がございましたら、お気軽にご連絡ください。
+どうぞよろしくお願いいたします。</div>
+        </div>
+
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-title">② 日程調整の確定連絡</div>
+          <div class="template-box" style="margin:8px 0 0;">〇〇さん
+
+日程のご確認ありがとうございます。
+以下の通りに確定させていただきます。
+
+■ 面談日程
+・日時：〇月〇日（〇）〇〇:〇〇〜
+・形式：Zoom（URLは当日1時間前にお送りします）
+・担当：【名前】
+
+ご不明な点やご質問はいつでもお気軽にどうぞ。
+当日お会いできるのを楽しみにしております！</div>
+        </div>
+
+        <div class="card" style="margin-bottom:12px;">
+          <div class="card-title">③ 選考辞退の申し出への返信</div>
+          <div class="template-box" style="margin:8px 0 0;">〇〇さん
+
+ご連絡いただきありがとうございます。
+また、ご検討いただいたこと、大変感謝しております。
+
+〇〇さんの今後のご活躍を心よりお祈り申し上げます。
+またご縁がございましたら、その際はぜひよろしくお願いいたします。</div>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <span class="callout-icon">🚨</span>
+        <div><strong>クレーム・問い合わせが来た場合：</strong>担当者が独断で対応せず、<strong>必ず採用責任者に報告してから</strong>返信してください。対応履歴を記録し、今後の改善に活かします。</div>
+      </div>
+
+      <div class="video-section">
+        <div class="template-label">▶ 関連公式リソース</div>
+        <a class="video-link-card" href="https://offerbox.zendesk.com/hc/ja/articles/38354821048473--OfferBox%E4%BD%BF%E3%81%84%E6%96%B9%E5%8B%95%E7%94%BB" target="_blank" rel="noopener">
+          <div class="vlc-icon">▶</div>
+          <div class="vlc-body">
+            <div class="vlc-title">OfferBox 使い方動画</div>
+            <div class="vlc-meta">学生とのメッセージ対応・操作方法を動画で確認できます</div>
+            <div class="vlc-url">offerbox.zendesk.com ／ ログイン必須</div>
+          </div>
+          <div class="vlc-arrow">→</div>
+        </a>
+        <a class="video-link-card" href="https://offerbox.zendesk.com/hc/ja/articles/26397450664089-OfferBox%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB" target="_blank" rel="noopener">
+          <div class="vlc-icon" style="background:var(--success);">📄</div>
+          <div class="vlc-body">
+            <div class="vlc-title">OfferBox 基本操作マニュアル</div>
+            <div class="vlc-meta">メッセージ機能の画面操作を文書・図解で確認できます</div>
+            <div class="vlc-url">offerbox.zendesk.com ／ ログイン必須</div>
+          </div>
+          <div class="vlc-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 6. 進捗管理 -->
+    <div id="status" class="section fade-in">
+      <div class="section-header">
+        <div class="section-icon">📊</div>
+        <div>
+          <div class="section-num">CHAPTER 05</div>
+          <div class="section-title">進捗・ステータス管理</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔄 選考ステータスの種類と管理</div>
+        <div class="status-flow">
+          <div class="status-chip">オファー送付済</div>
+          <div class="status-arrow">→</div>
+          <div class="status-chip">オファー承認</div>
+          <div class="status-arrow">→</div>
+          <div class="status-chip">面談調整中</div>
+          <div class="status-arrow">→</div>
+          <div class="status-chip">面談完了</div>
+          <div class="status-arrow">→</div>
+          <div class="status-chip">選考中</div>
+          <div class="status-arrow">→</div>
+          <div class="status-chip">内定</div>
+        </div>
+        <div class="status-flow" style="margin-top:8px;">
+          <div class="status-chip" style="border-color:#e05050;color:#e05050;">オファー未承認</div>
+          <div class="status-arrow"> / </div>
+          <div class="status-chip" style="border-color:#e05050;color:#e05050;">辞退</div>
+          <div class="status-arrow"> / </div>
+          <div class="status-chip" style="border-color:#6b7f9a;color:#6b7f9a;">不採用</div>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:16px;">
+        <table>
+          <thead>
+            <tr><th>ステータス</th><th>担当者の対応</th><th>期限目安</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="badge badge-blue">オファー送付済</span></td><td>承認・未承認を確認。5営業日後にフォロー検討</td><td>5営業日</td></tr>
+            <tr><td><span class="badge badge-green">オファー承認</span></td><td>1営業日以内に返信・日程調整を開始</td><td>翌営業日</td></tr>
+            <tr><td><span class="badge badge-yellow">面談調整中</span></td><td>3営業日以内に日程を確定、Zoom URL発行</td><td>3営業日</td></tr>
+            <tr><td><span class="badge badge-blue">面談完了</span></td><td>当日中に評価コメントを記入・上長に共有</td><td>当日</td></tr>
+            <tr><td><span class="badge badge-red">辞退</span></td><td>辞退理由をヒアリングし、管理表に記録</td><td>即時</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title">📋 週次レポート（毎週月曜 AM提出）</div>
+        <div class="grid-2">
+          <div>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">報告必須項目</p>
+            <ul style="font-size:13px;line-height:2;padding-left:16px;color:var(--text);">
+              <li>当週のオファー送付数</li>
+              <li>オファー承認数・承認率</li>
+              <li>面談実施数</li>
+              <li>辞退数・辞退理由</li>
+              <li>月間オファー残枠数</li>
+            </ul>
+          </div>
+          <div>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">報告先</p>
+            <ul style="font-size:13px;line-height:2;padding-left:16px;color:var(--text);">
+              <li>採用責任者（必須）</li>
+              <li>事業部マネージャー（任意）</li>
+              <li>提出方法：社内チャット or メール</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. 社内ルール -->
+    <div id="rules" class="section fade-in">
+      <div class="section-header">
+        <div class="section-icon">📌</div>
+        <div>
+          <div class="section-num">CHAPTER 06</div>
+          <div class="section-title">社内運用ルール・ガイドライン</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="summary-box">
+          <h4>✅ やるべきこと（MUST）</h4>
+          <ul>
+            <li>プロフィールを精読してからオファーを送る</li>
+            <li>返信は1営業日以内に行う</li>
+            <li>ステータスを毎日更新する</li>
+            <li>週次レポートを提出する</li>
+            <li>対応に迷ったら上長に相談する</li>
+            <li>個人情報は社内共有ツールのみで管理</li>
+          </ul>
+        </div>
+        <div class="card" style="background:#fff8f8;border-color:#fca5a5;">
+          <h4 style="font-size:14px;font-weight:700;color:#991b1b;margin-bottom:10px;">🚫 やってはいけないこと（NG）</h4>
+          <ul style="font-size:13px;line-height:2;padding-left:16px;color:#6a1515;">
+            <li>プロフィール未読でのオファー一括送付</li>
+            <li>学生への個人連絡先の交換</li>
+            <li>合否・内定をメッセージで通知</li>
+            <li>給与・待遇の独断交渉</li>
+            <li>他社の悪口・比較発言</li>
+            <li>学生情報の社外持ち出し</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:8px;">
+        <div class="card-title">🔒 個人情報・データ管理ルール</div>
+        <ul class="rule-list">
+          <li><span class="rule-mark mark-ok">✓</span>学生情報は<strong>OfferBox 管理画面内</strong>でのみ閲覧・管理する</li>
+          <li><span class="rule-mark mark-ok">✓</span>社内で情報共有する場合は<strong>社内承認済みツール</strong>（社内チャット・共有ドライブ）を使用</li>
+          <li><span class="rule-mark mark-ok">✓</span>PCのロック、ログアウトの徹底</li>
+          <li><span class="rule-mark mark-ng">✕</span>学生情報をメモ帳・個人スマホに記録することは禁止</li>
+          <li><span class="rule-mark mark-ng">✕</span>社外・退職者への情報共有は絶対禁止</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 8. NGワード -->
+    <div id="ng" class="section fade-in">
+      <div class="section-header">
+        <div class="section-icon">🚫</div>
+        <div>
+          <div class="section-num">CHAPTER 07</div>
+          <div class="section-title">NGワード・禁止表現一覧</div>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <span class="callout-icon">🚨</span>
+        <div>以下の表現はオファー文面・メッセージで使用禁止です。利用規約違反・コンプライアンス違反につながる可能性があります。</div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>NG表現</th><th>理由</th><th>OK代替表現</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>「若手歓迎」「若い会社」</td><td>年齢差別的表現</td><td>「成長意欲がある方を歓迎」</td></tr>
+            <tr><td>「体育会系」</td><td>属性差別の可能性</td><td>「チームワークを大切にできる方」</td></tr>
+            <tr><td>「第一志望にしてください」</td><td>過度な誘導・プレッシャー</td><td>「ぜひ選択肢の一つに」</td></tr>
+            <tr><td>「うちに来れば間違いない」</td><td>虚偽誇大表現の可能性</td><td>「一緒に成長しましょう」</td></tr>
+            <tr><td>「〇〇社よりも〜」（他社比較）</td><td>競合他社への誹謗</td><td>自社の強みのみを述べる</td></tr>
+            <tr><td>「すぐ返事をください」</td><td>学生へのプレッシャー</td><td>「ご都合のよいときにご返信を」</td></tr>
+            <tr><td>絵文字の多用（😊🎉等）</td><td>企業としての信頼性低下</td><td>基本は使用しない</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div>上記以外の表現でも「これでいいか迷う」と感じた場合は<strong>送付前に採用責任者に確認</strong>してください。判断に迷ったときは送らないことが原則です。</div>
+      </div>
+    </div>
+
+    <!-- 8. 公式動画・外部リソース -->
+    <div id="videos" class="section fade-in">
+      <div class="section-header">
+        <div class="section-icon">▶️</div>
+        <div>
+          <div class="section-num">REFERENCE</div>
+          <div class="section-title">公式動画・外部リソース</div>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div>OfferBox公式サポートページと、企業向けYouTubeチャンネルへのリンクをまとめています。操作に迷ったときはまず公式動画を確認してください。</div>
+      </div>
+
+      <!-- 公式サポート動画（Zendesk） -->
+      <div class="card">
+        <div class="card-title">🎬 OfferBox 使い方動画（公式サポートページ）</div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.8;margin-bottom:14px;">
+          OfferBoxの操作方法を動画で解説する公式サポートページです。プロフィール設定・オファー送付・メッセージ対応など、すべての基本操作をカバーしています。ログイン後に閲覧できます。
+        </p>
+        <a class="video-link-card" href="https://offerbox.zendesk.com/hc/ja/articles/38354821048473--OfferBox%E4%BD%BF%E3%81%84%E6%96%B9%E5%8B%95%E7%94%BB" target="_blank" rel="noopener">
+          <div class="vlc-icon">▶</div>
+          <div class="vlc-body">
+            <div class="vlc-title">OfferBox 使い方動画★</div>
+            <div class="vlc-meta">操作手順・機能説明の動画が一覧で掲載されています</div>
+            <div class="vlc-url">offerbox.zendesk.com ／ ログイン必須</div>
+          </div>
+          <div class="vlc-arrow">→</div>
+        </a>
+        <a class="video-link-card" href="https://offerbox.zendesk.com/hc/ja/articles/26397450664089-OfferBox%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E3%83%9E%E3%83%8B%E3%83%A5%E3%82%A2%E3%83%AB" target="_blank" rel="noopener">
+          <div class="vlc-icon" style="background:var(--success);">📄</div>
+          <div class="vlc-body">
+            <div class="vlc-title">OfferBox 基本操作マニュアル★</div>
+            <div class="vlc-meta">画面操作の手順を文書・図解で確認できる公式マニュアル</div>
+            <div class="vlc-url">offerbox.zendesk.com ／ ログイン必須</div>
+          </div>
+          <div class="vlc-arrow">→</div>
+        </a>
+        <a class="video-link-card" href="https://offerbox.zendesk.com/hc/ja/articles/900002042603-%E3%82%AA%E3%83%95%E3%82%A1%E3%83%BC%E6%96%87%E4%BD%9C%E6%88%90%E3%81%AE%E6%96%B9%E6%B3%95" target="_blank" rel="noopener">
+          <div class="vlc-icon" style="background:var(--accent);">✍️</div>
+          <div class="vlc-body">
+            <div class="vlc-title">オファー文作成の方法★</div>
+            <div class="vlc-meta">魅力的なオファー文の書き方・ポイントを公式が解説</div>
+            <div class="vlc-url">offerbox.zendesk.com ／ ログイン必須</div>
+          </div>
+          <div class="vlc-arrow">→</div>
+        </a>
+      </div>
+
+      <!-- 公式YouTubeチャンネル -->
+      <div class="card" style="margin-top:14px;">
+        <div class="card-title">📺 人事ZINE by OfferBox（採用担当者向けYouTube）</div>
+        <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:4px;">
+          <div style="flex:1;min-width:200px;">
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.8;margin-bottom:12px;">
+              採用市場動向・スカウト運用ノウハウ・採用課題解決シリーズを発信。週1本ペースで公開されています。
+            </p>
+            <a class="video-channel-link" href="https://www.youtube.com/@offerbox_626" target="_blank" rel="noopener">
+              ▶ YouTubeチャンネルを開く
+            </a>
+          </div>
+          <div style="background:var(--surface-2);border-radius:10px;padding:14px 18px;font-size:12.5px;color:var(--text-muted);min-width:180px;">
+            <div style="font-weight:700;color:var(--text);margin-bottom:8px;">📋 主な動画カテゴリ</div>
+            <ul style="padding-left:16px;line-height:2.1;">
+              <li>採用市場動向調査</li>
+              <li>採用課題解決シリーズ</li>
+              <li>スカウト型サービス運用ノウハウ</li>
+              <li>セミナーアーカイブ</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout success" style="margin-top:16px;">
+        <span class="callout-icon">✅</span>
+        <div>各章末の「▶ 関連公式動画」ボタンも同じサポートページに繋がっています。操作で迷ったら<strong>その章のボタンからすぐにアクセス</strong>できます。</div>
+      </div>
+    </div>
+    <div class="page-footer">
+      <div>OfferBox 社内運用マニュアル Ver 1.0 ／ 策定：2026年6月</div>
+      <div>改訂・問い合わせ先：採用責任者</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Scroll animation
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Active nav
+  const sections = document.querySelectorAll('[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) cur = s.id; });
+    navItems.forEach(n => {
+      n.classList.toggle('active', n.getAttribute('href') === '#' + cur);
+    });
+  });
+</script>
+</body>
+</html>
